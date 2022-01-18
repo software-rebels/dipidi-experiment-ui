@@ -1,0 +1,189 @@
+{# Load the tag library #}
+{% load bootstrap5 %}
+<html lang="en">
+<head>
+    <title>mehran</title>
+    {% bootstrap_css %}
+    {% bootstrap_javascript %}
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"
+            integrity="sha512-894YE6QWD5I59HgZOGReFYm4dnWc1Qt5NtvYSaNcOP+u1T9qYdvdihz0PPSiiqn/+/3e7Jo4EaG7TubfWGUrMQ=="
+            crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+</head>
+<body>
+<div class="container px-4 py-5">
+    <div class="row">
+        <div class="col">
+            <h2 class="pb-2 border-bottom">1. Select a Changed File</h2>
+            <form id="file-selection" action="" method="post" class="form">
+                {% csrf_token %}
+                {% bootstrap_form form %}
+                {% buttons %}
+                    <button type="submit" class="btn btn-primary">
+                        Get Impacted Targets
+                    </button>
+                {% endbuttons %}
+            </form>
+        </div>
+    </div>
+    <div class="row">
+        <h2 class="pb-2 border-bottom py-3">2. Apply Conditions (Optional)</h2>
+        <div class="col">
+            <input type="text" class="form-control" id="condition-name" placeholder="Condition Name"/>
+        </div>
+        <div class="col">
+            <select id="condition-type" class="form-select">
+                <option value="BoolRef">BoolRef</option>
+                <option value="BoolRef">ArithRef</option>
+                <option value="BoolRef">SeqRef</option>
+            </select>
+        </div>
+        <div class="col">
+            <input type="text" id="condition-value" class="form-control" placeholder="Condition Value"/>
+        </div>
+        <div class="col">
+            <button id="condition-add" type="submit" class="btn btn-primary">Add</button>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col">
+            <table class="table" id="condition-table">
+                <thead>
+                <tr>
+                    <th scope="col">Condition</th>
+                    <th scope="col">Type</th>
+                    <th scope="col">Value</th>
+                </tr>
+                </thead>
+                <tbody>
+                </tbody>
+            </table>
+            <button id="filter-submit" type="submit" class="btn btn-primary">Apply Conditions</button>
+            <button type="submit" class="btn btn-secondary" id="condition-clear">Clear</button>
+        </div>
+    </div>
+    <div class="row">
+        <h2 class="pb-2 border-bottom py-3">3. Result</h2>
+        <div class="col">
+            <div class="card">
+                <div class="card-header">
+                    Impacted Targets
+                </div>
+                <ul id="target-list" class="list-group">
+
+                </ul>
+            </div>
+        </div>
+        <div class="col">
+            <div class="card">
+                <div class="card-header">
+                    Conditions
+                </div>
+                <ul id="condition-list" class="list-group">
+
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+{# Display django.contrib.messages as Bootstrap alerts #}
+{% bootstrap_messages %}
+
+{# Display a form #}
+
+</body>
+<script>
+    let impactData = undefined;
+
+    function onTargetClicked(target) {
+        $("li.active").removeClass("active");
+        $(this).addClass("active");
+        $("#condition-list").empty();
+        impactData.forEach(item => {
+            if (item['target'] === $(this).text()) {
+                item["conditions"].forEach(condition => {
+                    $("<li/>", {
+                        "class": "target-item list-group-item list-group-item-action",
+                        html: `${condition["_name"]} - ${condition["_type"]}`,
+                    }).appendTo("#condition-list")
+                })
+            }
+        })
+    }
+
+    $("#condition-clear").on("click", function (e) {
+        e.preventDefault()
+        const table = $("#condition-table").find("tbody");
+        table.empty()
+    })
+
+    $("#condition-add").on("click", function (e) {
+        e.preventDefault()
+        const table = $("#condition-table").find("tbody");
+        table.append($("<tr>")
+            .append($("<td>")
+                .text($("#condition-name").val())
+            )
+            .append($("<td>")
+                .text($("#condition-type").val())
+            )
+            .append($("<td>")
+                .append($("#condition-value").val())
+            )
+        )
+    })
+
+    $("#filter-submit").on("click", function (e) {
+        const dataList = []
+        e.preventDefault();
+        $("#condition-table > tbody > tr").each(function (index, tr) {
+            const data = {}
+            data["_name"] = $(tr).find("td:eq(0)").text()
+            data["_type"] = $(tr).find("td:eq(1)").text()
+            data["value"] = $(tr).find("td:eq(2)").text()
+            dataList.push(data)
+        })
+        const data = {
+            "file": $("#id_files").val(),
+            "conditions": dataList
+        }
+        $.ajax({
+            type: 'POST',
+            url: "/filter",
+            data: JSON.stringify(data),
+            contentType: "application/json",
+            success: function (response) {
+                processData(response)
+            }
+        })
+    })
+
+    function processData(response) {
+        $("#target-list").empty();
+        $("#condition-list").empty();
+        const data = JSON.parse(response);
+        data.forEach(item => {
+            $("<li/>", {
+                "class": "target-item list-group-item list-group-item-action",
+                html: item['target'],
+                click: onTargetClicked
+            }).appendTo("#target-list")
+        })
+        impactData = data;
+    }
+
+    $("#file-selection").submit(function (e) {
+        e.preventDefault();
+        const serializedData = $(this).serialize();
+        $.ajax({
+            type: 'POST',
+            url: "",
+            data: serializedData,
+            success: function (response) {
+                processData(response)
+            }
+        })
+    })
+
+</script>
+</html>
+{# Read the documentation for more information #}
