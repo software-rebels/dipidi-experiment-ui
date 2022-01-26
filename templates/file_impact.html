@@ -33,12 +33,24 @@
         <div class="col">
             <select id="condition-type" class="form-select">
                 <option value="BoolRef">BoolRef</option>
-                <option value="BoolRef">ArithRef</option>
-                <option value="BoolRef">SeqRef</option>
+                <option value="ArithRef">ArithRef</option>
+                <option value="SeqRef">SeqRef</option>
             </select>
         </div>
         <div class="col">
-            <input type="text" id="condition-value" class="form-control" placeholder="Condition Value"/>
+            <div class="bool-input">
+                <div class="form-check form-check-inline">
+                    <input checked class="form-check-input" type="radio" name="bool-value" value="True" id="true-radio">
+                    <label class="form-check-label" for="true-radio">True</label>
+                </div>
+                <div class="form-check form-check-inline">
+                    <input class="form-check-input" type="radio" name="bool-value" value="False" id="false-radio">
+                    <label class="form-check-label" for="false-radio">False</label>
+                </div>
+            </div>
+            <div class="text-input d-none">
+                <input type="text" id="condition-value" class="form-control" placeholder="Condition Value"/>
+            </div>
         </div>
         <div class="col">
             <button id="condition-add" type="submit" class="btn btn-primary">Add</button>
@@ -127,7 +139,7 @@
                 .text($("#condition-type").val())
             )
             .append($("<td>")
-                .append($("#condition-value").val())
+                .append($("#condition-type").val() === "BoolRef" ?  $('input[name="bool-value"]:checked').val(): $("#condition-value").val())
             )
         )
     })
@@ -139,7 +151,11 @@
             const data = {}
             data["_name"] = $(tr).find("td:eq(0)").text()
             data["_type"] = $(tr).find("td:eq(1)").text()
-            data["value"] = $(tr).find("td:eq(2)").text()
+            if($(tr).find("td:eq(1)").text() == 'BoolRef'){
+                data["value"] = $('input[name="bool-value"]:checked').val()
+            } else {
+                data["value"] = $(tr).find("td:eq(2)").text()
+            }
             dataList.push(data)
         })
         const data = {
@@ -182,6 +198,16 @@
                 processData(response)
             }
         })
+    })
+
+    $('#condition-type').on('change', function() {
+        if($(this).val() === 'BoolRef'){
+            $(".bool-input").removeClass('d-none');
+            $('.text-input').addClass('d-none');
+        } else {
+            $(".bool-input").addClass('d-none');
+            $('.text-input').removeClass('d-none');
+        }
     })
 
 </script>
