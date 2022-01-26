@@ -26,6 +26,7 @@ SECRET_KEY = '6u7-kah$xy4mk^9*$$%lqpwavt5s*ff+w&5a0jl@g#bnbhz&w0'
 DEBUG = True
 
 ALLOWED_HOSTS = []
+CSRF_TRUSTED_ORIGINS = ['http://swag.cs.uwaterloo.ca']
 
 
 # Application definition
