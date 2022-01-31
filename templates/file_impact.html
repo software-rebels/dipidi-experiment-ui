@@ -151,11 +151,7 @@
             const data = {}
             data["_name"] = $(tr).find("td:eq(0)").text()
             data["_type"] = $(tr).find("td:eq(1)").text()
-            if($(tr).find("td:eq(1)").text() == 'BoolRef'){
-                data["value"] = $('input[name="bool-value"]:checked').val()
-            } else {
-                data["value"] = $(tr).find("td:eq(2)").text()
-            }
+            data["value"] = $(tr).find("td:eq(2)").text()
             dataList.push(data)
         })
         const data = {
