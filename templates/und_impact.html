@@ -1,0 +1,46 @@
+{# Load the tag library #}
+{% load bootstrap5 %}
+<html lang="en">
+<head>
+    <title>mehran</title>
+    {% bootstrap_css %}
+    {% bootstrap_javascript %}
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"
+            integrity="sha512-894YE6QWD5I59HgZOGReFYm4dnWc1Qt5NtvYSaNcOP+u1T9qYdvdihz0PPSiiqn/+/3e7Jo4EaG7TubfWGUrMQ=="
+            crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+</head>
+<body>
+<div class="container px-4 py-5">
+    <div class="row">
+        <div class="col">
+            <h2 class="pb-2 border-bottom">1. Select a Changed File or Commit</h2>
+            <form id="file-selection" action="" method="post" class="form">
+                {% csrf_token %}
+                {% bootstrap_form form %}
+                {% buttons %}
+                    <button type="submit" class="btn btn-primary">
+                        Get Impacted Files
+                    </button>
+                {% endbuttons %}
+            </form>
+        </div>
+    </div>
+    <div class="row">
+            <h2 class="pb-2 border-bottom py-3">2. Result</h2>
+            <div class="col">
+                <div class="card">
+                    <div class="card-header">
+                        Impacted Files
+                    </div>
+                    <ul id="target-list" class="list-group">
+                        {% for file in impacted %}
+                            <li class="target-item list-group-item list-group-item-action">{{ file }}</li>
+                        {% endfor %}
+                    </ul>
+                </div>
+            </div>
+    </div>
+</div>
+
+
+</body>

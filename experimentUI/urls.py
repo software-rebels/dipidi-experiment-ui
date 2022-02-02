@@ -19,5 +19,6 @@ from django.contrib import admin
 
 urlpatterns = [
     path('', views.index, name='index'),
-    path('filter', views.filter_targets)
+    path('filter', views.filter_targets),
+    path('und', views.understand_index, name='und_index')
 ]
