@@ -117,6 +117,6 @@ USE_TZ = True
 STATIC_URL = '/static/'
 
 ### Project specific setting
-PKL_NAME = 'pkls/et_last.pkl'
+PKL_NAME = 'pkls/box2d.pkl'
 DIPIDI_ADDRESS = 'http://localhost:8008'
-GIT_PROJECT_PATH = '/Users/mehranmeidani/uWaterloo/Research/etlegacy'
+GIT_PROJECT_PATH = '/Users/mehranmeidani/uWaterloo/Research/box2d'

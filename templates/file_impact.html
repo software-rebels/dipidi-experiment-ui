@@ -27,6 +27,7 @@
     </div>
     <div class="row">
         <h2 class="pb-2 border-bottom py-3">2. Apply Conditions (Optional)</h2>
+        <p>All the conditions added to the table below will be "and" together. Choose ArithRef for numbers (like version == 2) and SeqRef for strings (like OS == "LINUX")</p>
         <div class="col">
             <input type="text" class="form-control" id="condition-name" placeholder="Condition Name"/>
         </div>
@@ -189,9 +190,13 @@
     })
 
     function processData(response) {
+        const data = JSON.parse(response);
+        if(!Array.isArray(data) && data['error']) {
+            alert(data['message'])
+            return
+        }
         $("#target-list").empty();
         $("#condition-list").empty();
-        const data = JSON.parse(response);
         data.forEach(item => {
             $("<li/>", {
                 "class": "target-item list-group-item list-group-item-action",

@@ -25,7 +25,7 @@ class FileUNDImpactForm(forms.Form):
     ]
     selection_type = forms.ChoiceField(widget=forms.RadioSelect,
                                        choices=SELECTION_TYPE,
-                                       initial="1")
+                                       initial="2")
     commit = forms.CharField(required=False)
     func_name = forms.CharField(required=False)
 
