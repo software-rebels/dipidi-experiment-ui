@@ -117,6 +117,6 @@ USE_TZ = True
 STATIC_URL = '/static/'
 
 ### Project specific setting
-PROJECT_NAME = 'etlegacy/'
+PKL_NAME = 'pkls/et_last.pkl'
+DIPIDI_ADDRESS = 'http://localhost:8008'
 GIT_PROJECT_PATH = '/Users/mehranmeidani/uWaterloo/Research/etlegacy'
-UND_PREFIX = '/Users/mehranmeidani/uWaterloo/Research/etlegacy/'

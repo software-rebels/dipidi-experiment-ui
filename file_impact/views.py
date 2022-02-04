@@ -13,7 +13,7 @@ from django.conf import settings
 
 # Create your views here.
 def index(request):
-    s = xmlrpc.client.ServerProxy('http://localhost:8008')
+    s = xmlrpc.client.ServerProxy(settings.DIPIDI_ADDRESS)
     if request.method == 'GET':
         form = FileImpactForm(s.get_file_lists())
         return render(request, 'file_impact.html', {"form": form})
@@ -30,7 +30,7 @@ def index(request):
                 })
             return HttpResponse(json.dumps(response))
         else:
-            s = xmlrpc.client.ServerProxy('http://localhost:8008')
+            s = xmlrpc.client.ServerProxy(settings.DIPIDI_ADDRESS)
             impact = s.get_impacted_by_commit_condition(request.POST["commit"], [])
             response = list()
             for target, conditions in impact.items():
@@ -49,8 +49,7 @@ def understand_index(request):
     files = set()
     for key in FuncEntity.FuncEntity.lookup.keys():
         func, file = key.split(';')
-        if settings.PROJECT_NAME in file:
-            files.add(file[file.index(settings.PROJECT_NAME) + len(settings.PROJECT_NAME):])
+        files.add(file)
     if request.method == 'GET':
         form = FileUNDImpactForm(files)
         return render(request, 'und_impact.html', {"form": form})
@@ -65,10 +64,9 @@ def understand_index(request):
                     changed_functions.append((func.name,file.old_path or file.new_path))
             impacted = set()
             for key in changed_functions:
-                local_impacted = FuncEntity.findImpactedFiles(FuncEntity.FuncEntity.get(key[0],
-                                                              settings.UND_PREFIX + key[1]))
+                local_impacted = FuncEntity.findImpactedFiles(FuncEntity.FuncEntity.get(key[0], key[1]))
                 for file in local_impacted:
-                    impacted.add(file[len(settings.UND_PREFIX):])
+                    impacted.add(file)
             return render(request, 'und_impact.html', {"form": form, 'impacted': impacted})
         return render(request, 'und_impact.html', {"form": form})
 
@@ -81,7 +79,7 @@ def filter_targets(request):
         for condition in body["conditions"]:
             if condition['_type'] == "BoolRef":
                 condition['value'] = True if condition['value'] == "True" else False
-        s = xmlrpc.client.ServerProxy('http://localhost:8008')
+        s = xmlrpc.client.ServerProxy(settings.DIPIDI_ADDRESS)
         if body['selection_type'] == '1':
             impact = s.get_impact_by_file_condition(body["file"], body["conditions"])
         else:

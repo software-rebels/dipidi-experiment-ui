@@ -27,6 +27,7 @@ class FileUNDImpactForm(forms.Form):
                                        choices=SELECTION_TYPE,
                                        initial="1")
     commit = forms.CharField(required=False)
+    func_name = forms.CharField(required=False)
 
     def __init__(self, files, *args, **kwargs):
         super(FileUNDImpactForm, self).__init__(*args, **kwargs)
