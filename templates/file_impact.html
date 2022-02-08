@@ -76,6 +76,7 @@
     </div>
     <div class="row">
         <h2 class="pb-2 border-bottom py-3">3. Result</h2>
+        <span style="color: green;" id="fetch-result"></span>
         <div class="col">
             <div class="card">
                 <div class="card-header">
@@ -165,6 +166,7 @@
     $("#filter-submit").on("click", function (e) {
         const dataList = []
         e.preventDefault();
+        $("#fetch-result").text("Fetching data ...")
         $("#condition-table > tbody > tr").each(function (index, tr) {
             const data = {}
             data["_name"] = $(tr).find("td:eq(0)").text()
@@ -185,6 +187,9 @@
             contentType: "application/json",
             success: function (response) {
                 processData(response)
+            },
+            error: function(r) {
+                $("#fetch-result").text("Error! Try Again!")
             }
         })
     })
@@ -197,6 +202,7 @@
         }
         $("#target-list").empty();
         $("#condition-list").empty();
+        $("#fetch-result").text("Got " + data.length + " target(s)")
         data.forEach(item => {
             $("<li/>", {
                 "class": "target-item list-group-item list-group-item-action",
@@ -213,12 +219,16 @@
         const table = $("#condition-table").find("tbody");
         table.empty()
         const serializedData = $(this).serialize();
+        $("#fetch-result").text("Fetching data ...")
         $.ajax({
             type: 'POST',
             url: "",
             data: serializedData,
             success: function (response) {
                 processData(response)
+            },
+            error: function (r){
+                $("#fetch-result").text("Error! Try Again!")
             }
         })
     })

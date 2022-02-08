@@ -11,7 +11,7 @@
 </head>
 <body>
 <div class="container px-4 py-5">
-{{ error }}
+    <span style="color: red;">{{ error }}</span>
     <div class="row">
         <div class="col">
             <h2 class="pb-2 border-bottom">1. Select a Changed File or Commit</h2>
@@ -27,26 +27,29 @@
         </div>
     </div>
     <div class="row">
-            <h2 class="pb-2 border-bottom py-3">2. Result</h2>
-            <div class="col">
-                <div class="card">
-                    <div class="card-header">
-                        Impacted Files
-                    </div>
-                    <ul id="target-list" class="list-group">
-                        {% for file in impacted %}
-                            <li class="target-item list-group-item list-group-item-action">{{ file }}</li>
-                        {% endfor %}
-                    </ul>
+        <h2 class="pb-2 border-bottom py-3">2. Result</h2>
+        {% if impacted %}
+            <span style="color: green;" id="fetch-result">Returned {{ impacted|length }} file(s)</span>
+        {% endif %}
+        <div class="col">
+            <div class="card">
+                <div class="card-header">
+                    Impacted Files
                 </div>
+                <ul id="target-list" class="list-group">
+                    {% for file in impacted %}
+                        <li class="target-item list-group-item list-group-item-action">{{ file }}</li>
+                    {% endfor %}
+                </ul>
             </div>
+        </div>
     </div>
 </div>
 <script>
-    $("input[name='selection_type']").change( function(e){
+    $("input[name='selection_type']").change(function (e) {
 
-        if(this.checked){
-            if($(this).val()==='1'){
+        if (this.checked) {
+            if ($(this).val() === '1') {
                 $("#id_files").parent().removeClass("d-none")
                 $("#id_func_name").parent().removeClass("d-none")
                 $("#id_commit").parent().addClass("d-none")
@@ -58,10 +61,10 @@
         }
 
     })
-    $(document).ready(function(){
-            $("#id_files").parent().addClass("d-none")
-            $("#id_func_name").parent().addClass("d-none")
-        })
+    $(document).ready(function () {
+        $("#id_files").parent().addClass("d-none")
+        $("#id_func_name").parent().addClass("d-none")
+    })
 </script>
 
 </body>
